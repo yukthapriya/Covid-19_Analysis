@@ -1,4 +1,4 @@
-# Covid-19_Analysis (Final Assessment)
+# Covid-19_Analysis (Final Assignment)
 Based on a dataset that contains the cumulative number of covid cases for a state/country.
 A small program that would download the dataset, and displays the following information:
 1.  Countries having more than 5000000 confirmed cases by 29th May 2021.
