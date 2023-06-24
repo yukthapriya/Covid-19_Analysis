@@ -18,80 +18,42 @@ And is documented here: https://www.kaggle.com/datasets/sudalairajkumar/novel-co
  
 # Tools Required
 
-python 3.8
-Jupyter Notebook
-Anaconda
+ python 3.8
+ 
+ Jupyter Notebook
+ 
+ Anaconda
+ 
 # Implementation
-# import the packages
+# Importing necessary libraries and modules:
 
-import requests
-import json
-from datetime import datetime
-import matplotlib.pyplot as plt
+The requests library is used for making HTTP requests to download the dataset, json library is used for parsing the JSON data, and datetime module is used for handling dates.
 
-# Download the dataset
+# Downloading the dataset
+The code downloads the dataset from the provided URL and stores the JSON response in the data variable.
 
-url = "https://raw.githubusercontent.com/niranjanthiru/covid_cases_vaccination/855fd25e68f50b009f7ed88252fa3e4e70b54dfb/covid_19_data.json"
-response = requests.get(url)
-data = response.json()
+Extracting the timeline of the number of cases per day by state/country:
 
-# Filter countries with more than 5,000,000 confirmed cases by 29th May 2021
+                              timeline = {}
+                              for country in data:
+                                  date = datetime.strptime(country["ObservationDate"], "%m/%d/%Y")
+                                  if date in timeline:
+                                      timeline[date].append(country)
+                                  else:
+                                      timeline[date] = [country]
 
-high_cases_countries = [country for country in data if country["Confirmed"] > 5000000 and country["ObservationDate"] == "05/29/2021"]
+This loop iterates over each entry in the dataset and extracts the observation date and country information. It creates a dictionary called timeline where the keys are the dates, and the values are lists of countries with their respective case information on that date.
 
-# the state/country with the most number of recoveries on a day
+Displaying the timeline of the number of cases per day (not cumulative) by state/country:
 
-most_recoveries_country = max(data, key=lambda x: x["Recovered"])
-
-# Extract the timeline of the number of cases per day by state/country
-
-timeline = {}
-for country in data:
-    date = datetime.strptime(country["ObservationDate"], "%m/%d/%Y")
-    if date in timeline:
-        timeline[date].append(country)
-    else:
-        timeline[date] = [country]
-
-# status timeline
-status_timeline = {}
-for date, countries in timeline.items():
-    status_timeline[date] = {}
-    for country in countries:
-        if country["Confirmed"] > 500000:
-            status = "red"
-        elif country["Confirmed"] > 100000:
-            status = "orange"
-        elif country["Confirmed"] > 10000:
-            status = "yellow"
-        else:
-            status = "green"
-        status_timeline[date][country["Country"]] = status
-
-# Display the information
-print("Countries with more than 5,000,000 confirmed cases by 29th May 2021:")
-for country in high_cases_countries:
-    print(country["Country"])
-
-print("\nState/Country with the most number of recoveries on a day:")
-print(most_recoveries_country["Country"])
-
-
-print("\nTimeline of the number of cases per day (not cumulative) by country:")
-for date, countries in timeline.items():
-    print(f"{date.strftime('%m/%d/%Y')}:")
-    for country in countries:
-        print(f"{country['Country']}: {country['Confirmed']} cases")
+                              for date, countries in timeline.items():
+                                  print(f"{date.strftime('%m/%d/%Y')}:")
+                                  for country in countries:
+                                      print(f"{country['Country/Region']}: {country['Confirmed']} cases")
+                                  print()
 
 
 
-print("\nTimeline of the status of the countries:")
-for date, countries in status_timeline.items():
-    print(f"{date.strftime('%m/%d/%Y')}:")
-    for country, status in countries.items():
-        print(f"{country}: {status}")
+This loop iterates over the items in the timeline dictionary. For each date, it prints the date in the format "MM/DD/YYYY". Then, it iterates over the list of countries on that date and prints the country name along with the number of confirmed cases. After printing the cases for a specific date, it prints an empty line to separate the information for different dates.
 
-
-
-
-
+By executing this code, you will see the timeline of the number of cases per day (not cumulative) by state/country, with each date followed by a list of countries and their respective confirmed cases on that date.
